@@ -258,7 +258,9 @@ sns.barplot(x='Championship Probability', y='Team', data=team_probs.head(10))
 plt.title('Top 10 Teams Most Likely to Win the 2025 NBA Championship (XGBoost)')
 plt.xlim(0, max(team_probs['Championship Probability']) * 1.1)
 plt.tight_layout()
+'''
 plt.savefig('championship_prediction_2025_xgb.png')
+'''
 print("Prediction plot saved to 'championship_prediction_2025_xgb.png'")
 
 # Feature importance
@@ -266,7 +268,9 @@ plt.figure(figsize=(12, 8))
 xgb.plot_importance(best_model, importance_type='weight', max_num_features=20)
 plt.title('Feature Importance for NBA Championship Prediction (XGBoost)')
 plt.tight_layout()
+'''
 plt.savefig('feature_importance_xgb.png')
+'''
 print("Feature importance plot saved to 'feature_importance_xgb.png'")
 
 # Save predictions to CSV

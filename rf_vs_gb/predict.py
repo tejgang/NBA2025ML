@@ -158,7 +158,9 @@ sns.barplot(x='LGB_Importance', y='Feature', data=lgb_importance.head(10))
 plt.title('LightGBM Feature Importance')
 
 plt.tight_layout()
+'''
 plt.savefig('feature_importance_comparison.png')
+'''
 print("Feature importance comparison saved to 'feature_importance_comparison.png'")
 
 # Prepare prediction data
@@ -209,7 +211,9 @@ plt.title('Top 10 Teams Most Likely to Win the 2025 NBA Championship')
 plt.xticks(x, top10_teams['Team'], rotation=45, ha='right')
 plt.legend()
 plt.tight_layout()
+'''
 plt.savefig('championship_prediction_comparison_2025.png')
+'''
 print("Prediction comparison plot saved to 'championship_prediction_comparison_2025.png'")
 
 # Historical validation with both models
