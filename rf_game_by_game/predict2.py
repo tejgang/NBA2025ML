@@ -3,9 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from imblearn.over_sampling import SMOTE
-from imblearn.ensemble import BalancedRandomForestClassifier
 from sklearn.ensemble import RandomForestClassifier
-from lightgbm import LGBMClassifier
 from sklearn.metrics import roc_auc_score, accuracy_score
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 
@@ -47,7 +45,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 smote = SMOTE(random_state=43) #adds random for x and y for balance
 X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
 
-model = BalancedRandomForestClassifier(random_state=43)
+model = RandomForestClassifier(random_state=43)
 model.fit(X_train, y_train)
 print("Train Accuracy:", model.score(X_train, y_train))
 y_pred = model.predict(X_test)
