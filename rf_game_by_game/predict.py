@@ -18,4 +18,6 @@ missing_values = nba_df.isnull().sum()
 print(missing_values[missing_values > 0])
 
 
-
+features = [
+    'Visitor/Neutral','PTS','Win','Home/Neutral','PTS','Win','Visitor Seed','Home Seed','Year'
+]
