@@ -1,0 +1,76 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.env
+.venv
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.spyderproject
+.spyproject
+.ropeproject
+
+# Project specific
+*.log
+*.csv
+!nba_team_season_metrics_2001_2025.csv
+*.pkl
+*.h5
+*.json
+*.png
+*.jpg
+*.jpeg
+*.pdf
+
+# OS specific
+.DS_Store
+Thumbs.db
+.directory
+desktop.ini
+
+# Temporary files
+tmp/
+temp/
+
+# Model files
+models/
+*.model
+*.joblib
+*.pickle
+
+# Cached data
+.cache/ 
