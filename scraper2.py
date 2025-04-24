@@ -5,131 +5,106 @@ import re
 import time
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+SESSION = requests.Session()
 
-def get_team_abbreviations() -> list:
+def fetch_url(url, max_retries=5, backoff_factor=1.0):
     """
-    Scrape the teams index page to get all 3-letter team abbreviations,
-    both active and inactive franchises.
+    GET with simple exponential backoff on 429 Too Many Requests.
     """
-    url = "https://www.basketball-reference.com/teams/"
-    resp = requests.get(url, headers=HEADERS)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.content, "html.parser")
-
-    abbrs = set()
-    for table_id in ("teams_active", "teams_inactive"):
-        tbl = soup.find("table", id=table_id)
-        if not tbl:
+    for i in range(max_retries):
+        resp = SESSION.get(url, headers=HEADERS)
+        if resp.status_code == 200:
+            return resp
+        if resp.status_code == 429:
+            wait = backoff_factor * (2 ** i)
+            print(f"429 from {url}, sleeping {wait:.1f}s (retry {i+1}/{max_retries})")
+            time.sleep(wait)
             continue
-        for a in tbl.select("tbody a[href^='/teams/']"):
-            abbr = a["href"].split("/")[2]
-            abbrs.add(abbr)
-    return sorted(abbrs)
+        resp.raise_for_status()
+    raise Exception(f"Failed to fetch {url} after {max_retries} retries (last status {resp.status_code})")
 
 def get_seed_and_name(abbr: str, year: int, cache: dict) -> dict:
-    """
-    Fetch full team name and seed for a given season-year.
-    Caches results in `cache` to avoid repeat HTTP calls.
-    """
     key = f"{abbr}_{year}"
     if key in cache:
         return cache[key]
-
     url = f"https://www.basketball-reference.com/teams/{abbr}/{year}.html"
-    r = requests.get(url, headers=HEADERS)
-    if r.status_code != 200:
-        cache[key] = {"name": None, "seed": None}
-        return cache[key]
-
-    soup = BeautifulSoup(r.content, "html.parser")
-
-    # Extract name from H1 ("2006 Miami Heat" → "Miami Heat")
+    resp = fetch_url(url)
+    soup = BeautifulSoup(resp.content, "html.parser")
+    # Team name
     h1 = soup.find("h1").get_text(strip=True)
     name = re.sub(r"^\d{4}\s+", "", h1)
-
-    # Find text like "52-30, 2nd in East" to get seed
+    # Seed
     rec = soup.find(text=re.compile(r"in (East|West|Atlantic|Central|Pacific|Southeast|Northwest|Southwest)"))
     seed = None
     if rec:
         m = re.search(r"(\d+)(?:st|nd|rd|th) in", rec)
         if m:
             seed = int(m.group(1))
-
     cache[key] = {"name": name, "seed": seed}
     time.sleep(0.2)
     return cache[key]
 
-def scrape_playoff_games_year(year: int, team_abbrs: list, cache: dict) -> list:
-    """
-    For a given year, iterate every team abbreviation in team_abbrs,
-    scrape that team's game-log page, pull out playoff home games,
-    and return a list of game-record dicts.
-    """
+def scrape_playoff_games_year(year: int, cache: dict) -> list:
+    bracket_url = f"https://www.basketball-reference.com/playoffs/NBA_{year}.html"
+    resp = fetch_url(bracket_url)
+    soup = BeautifulSoup(resp.content, "html.parser")
+    # Extract commented-out bracket HTML
+    comments = "".join(str(c) for c in soup.find_all(string=lambda t: isinstance(t, Comment)))
+    comment_soup = BeautifulSoup(comments, "html.parser")
+    series_divs = soup.select("div.series_summary") + comment_soup.select("div.series_summary")
+    if not series_divs:
+        print(f"  ⚠️ No series summaries for {year}, skipping")
+        return []
+    # Unique team abbreviations
+    playoff_abbrs = {
+        a["href"].split("/")[2]
+        for div in series_divs
+        for a in div.find_all("a", href=True)
+        if a["href"].startswith("/teams/")
+    }
     games = []
-    for abbr in team_abbrs:
-        # Fetch the team's game log page for that year
-        url = f"https://www.basketball-reference.com/teams/{abbr}/{year}_games.html"
-        r = requests.get(url, headers=HEADERS)
-        if r.status_code != 200:
-            continue
-
-        soup = BeautifulSoup(r.content, "html.parser")
-        # Un-comment any hidden tables
-        for c in soup.find_all(string=lambda t: isinstance(t, Comment)):
-            c.extract()
-
-        # Locate the playoffs table by id starting with 'playoffs'
-        playoff_table = None
-        for tbl in soup.find_all("table"):
-            tid = tbl.get("id", "").lower()
-            if tid.startswith("playoffs"):
-                playoff_table = tbl
-                break
-        if playoff_table is None:
-            continue  # this team didn't make playoffs or structure changed
-
-        # Get home-team info
+    for abbr in playoff_abbrs:
         info = get_seed_and_name(abbr, year, cache)
         team1_name = info["name"]
         seed_home  = info["seed"]
-
-        # Iterate over rows in the playoffs table
-        for row in playoff_table.find("tbody").find_all("tr"):
-            # skip header rows
+        # Team game logs
+        games_url = f"https://www.basketball-reference.com/teams/{abbr}/{year}_games.html"
+        gr = fetch_url(games_url)
+        gsoup = BeautifulSoup(gr.content, "html.parser")
+        for c in gsoup.find_all(string=lambda t: isinstance(t, Comment)):
+            c.extract()
+        # Find playoffs table
+        playoff_table = None
+        for tbl in gsoup.find_all("table"):
+            if tbl.get("id", "").lower().startswith("playoffs"):
+                playoff_table = tbl
+                break
+        if playoff_table is None:
+            continue
+        # Parse rows
+        for row in playoff_table.tbody.find_all("tr"):
             if row.get("class") and "thead" in row["class"]:
                 continue
-
-            # Ensure it's marked Playoffs
-            gt = row.find("td", {"data-stat": "game_type"})
-            if not gt or gt.text.strip() != "Playoffs":
-                continue
-
-            # Only home games: location cell blank (away games marked '@')
+            # only home games
             loc = row.find("td", {"data-stat": "game_location"}).text.strip()
             if loc != "":
                 continue
-
-            # Opponent
             opp_cell = row.find("td", {"data-stat": "opp_name"})
             if not opp_cell or not opp_cell.find("a"):
                 continue
-            opp_abbr  = opp_cell.find("a")["href"].split("/")[2]
-            team2_name = opp_cell.get_text(strip=True)
-
-            # Scores
+            opp_abbr = opp_cell.find("a")["href"].split("/")[2]
+            opp_name = opp_cell.get_text(strip=True)
+            # scores
             try:
                 pts_h = int(row.find("td", {"data-stat": "pts"}).text)
                 pts_a = int(row.find("td", {"data-stat": "opp_pts"}).text)
             except:
                 continue
-
-            # Visitor seed & name
             opp_info = get_seed_and_name(opp_abbr, year, cache)
             seed_away = opp_info["seed"]
-
             games.append({
                 "team1":      team1_name,
-                "team2":      team2_name,
+                "team2":      opp_name,
                 "team1_id":   abbr,
                 "team2_id":   opp_abbr,
                 "team1_seed": seed_home,
@@ -137,31 +112,18 @@ def scrape_playoff_games_year(year: int, team_abbrs: list, cache: dict) -> list:
                 "team1_win":  pts_h > pts_a,
                 "year":       year
             })
-
-        # be polite
-        time.sleep(0.2)
-
+        time.sleep(0.3)
     return games
 
 def compile_all_playoff_games(start_year=2001, end_year=2025) -> pd.DataFrame:
-    team_abbrs = get_team_abbreviations()
     cache = {}
     all_games = []
-
     for yr in range(start_year, end_year + 1):
-        print(f"→ Scraping {yr} playoffs…")
-        year_games = scrape_playoff_games_year(yr, team_abbrs, cache)
+        print(f"→ Scraping playoffs {yr}…")
+        year_games = scrape_playoff_games_year(yr, cache)
         all_games.extend(year_games)
-
     df = pd.DataFrame(all_games)
-    # Ensure correct column order
-    cols = [
-        "team1","team2",
-        "team1_id","team2_id",
-        "team1_seed","team2_seed",
-        "team1_win","year"
-    ]
-    # Only keep columns that exist
+    cols = ["team1","team2","team1_id","team2_id","team1_seed","team2_seed","team1_win","year"]
     df = df[[c for c in cols if c in df.columns]]
     df.to_csv("game_by_game_2001_2025.csv", index=False)
     return df
