@@ -263,7 +263,9 @@ sns.barplot(x='Championship Probability', y='Team', data=team_probs.head(10))
 plt.title('Top 10 Teams Most Likely to Win the 2025 NBA Championship')
 plt.xlim(0, max(team_probs['Championship Probability']) * 1.1)
 plt.tight_layout()
+'''
 plt.savefig('championship_prediction_2025.png')
+'''
 print("Prediction plot saved to 'championship_prediction_2025.png'")
 
 # Feature importance
@@ -276,7 +278,9 @@ feature_importance = pd.DataFrame({
 sns.barplot(x='Importance', y='Feature', data=feature_importance)
 plt.title('Feature Importance for NBA Championship Prediction')
 plt.tight_layout()
+'''
 plt.savefig('feature_importance.png')
+'''
 print("Feature importance plot saved to 'feature_importance.png'")
 
 # Save predictions to CSV
