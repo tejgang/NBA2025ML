@@ -60,4 +60,3 @@ predicted_outcome = model.predict(laker_game)
 print(predicted_outcome)
 print("Predicted Home Win:" if predicted_outcome[0] == 1 else "Predicted Home Loss 😢")
 
-
