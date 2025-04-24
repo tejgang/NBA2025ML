@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from imblearn.over_sampling import SMOTE
 from imblearn.ensemble import BalancedRandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
 from lightgbm import LGBMClassifier
 from sklearn.metrics import roc_auc_score, accuracy_score
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
