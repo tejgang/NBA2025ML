@@ -1,23 +1,4 @@
-﻿Charlotte Hornets,6,New Jersey Nets,1,,,,,
-Miami Heat,3,Detroit Pistons,2,,,,,
-Milwaukee Bucks,2,Boston Celtics,3,,,,,
-Orlando Magic,7,Charlotte Hornets,4,,,,,
-Philadelphia 76ers,1,Orlando Magic,5,,,,,
-Indiana Pacers,8,Philadelphia 76ers,6,,,,,
-Toronto Raptors,5,Toronto Raptors,7,,,,,
-New York Knicks,4,Indiana Pacers,8,,,,,
-Dallas Mavericks,5,Sacramento Kings,1,,,,,
-Utah Jazz,4,San Antonio Spurs,2,,,,,
-Los Angeles Lakers,2,Los Angeles Lakers,3,,,,,
-Portland Trail Blazers,7,Dallas Mavericks,4,,,,,
-Sacramento Kings,3,Minnesota Timberwolves,5,,,,,
-Phoenix Suns,6,Portland Trail Blazers,6,,,,,
-San Antonio Spurs,1,Seattle SuperSonics,7,,,,,
-Minnesota Timberwolves,8,Utah Jazz,8,,,,,
-,,,,,,,,
-,,,,,,,,
-,,,,,,,,
-Visitor/Neutral,PTS,Win,Home/Neutral,PTS,Win,Visitor Seed,Home Seed,Year
+﻿Visitor/Neutral,PTS,Win,Home/Neutral,PTS,Win,Visitor Seed,Home Seed,Year
 Indiana Pacers,79,TRUE,Philadelphia 76ers,78,FALSE,8,1,2001
 Dallas Mavericks,86,FALSE,Utah Jazz,88,TRUE,5,4,2001
 Minnesota Timberwolves,82,FALSE,San Antonio Spurs,87,TRUE,8,1,2001
