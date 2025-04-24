@@ -26,9 +26,9 @@ nba_df["Vis_Win"] = nba_df["Win"]
 nba_df["Home_Win"] = nba_df["Win.1"]
 
 nba_df.drop(['Win','Win.1',"Vis_Win","Visitor/Neutral","Home/Neutral"],axis=1,inplace=True)
-if nba_df["Home_Win"].dtype != "bool":
+if nba_df["Home_Win"].dtype != "bool": #make home_win boolean
     nba_df["Home_Win"] = nba_df["Home_Win"].astype(bool)
-nba_df["Home_Win"] = nba_df["Home_Win"].map({True: 1, False: 0})
+nba_df["Home_Win"] = nba_df["Home_Win"].map({True: 1, False: 0}) #make home win mapped to 1 for True, 0 for false
 
 # Show any unmapped values
 print(nba_df[pd.isnull(nba_df["Home_Win"])])
@@ -38,13 +38,13 @@ features = [
     'Home_Win','Visitor Seed','Home Seed']
 
 
-laker_game = nba_df.iloc[-1]
-nba_df = nba_df.iloc[0:-2]
+laker_game = nba_df.iloc[-1] #select last row for game we want to predict
+nba_df = nba_df.iloc[0:-2] #select everything else for training and testing
 X = nba_df.drop(columns=['Home_Win'])
 y = nba_df['Home_Win']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=43)
-smote = SMOTE(random_state=43)
+smote = SMOTE(random_state=43) #adds random for x and y for balance
 X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
 
 model = BalancedRandomForestClassifier(random_state=43)
