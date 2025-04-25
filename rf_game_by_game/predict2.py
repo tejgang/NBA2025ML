@@ -12,8 +12,7 @@ np.random.seed(43)
 print("loading that dih...")
 
 # load data with limited number of columns to avoid the trailing commas
-nba_df = pd.read_csv("NBA Complete Playoff Matchups 2001-2025.csv", 
-                    usecols=range(9))  # Only read the first 9 columns, which contain the actual data
+nba_df = pd.read_csv("NBA Complete Playoff Matchups 2001-2025.csv")
 
 # Print column names to verify
 print("Original column names:", nba_df.columns.tolist())
