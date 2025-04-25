@@ -44,7 +44,7 @@ features = [
     'Home_Win','Visitor Seed','Home Seed']
 
 # select last row for game we want to predict
-laker_game = nba_df.iloc[-1] #select last row for game we want to predict
+last_game = nba_df.iloc[-1] #select last row for game we want to predict
 nba_df = nba_df.iloc[0:-2] #select everything else for training and testing
 X = nba_df.drop(columns=['Home_Win'])
 y = nba_df['Home_Win']
@@ -64,8 +64,8 @@ print(f'Test Accuracy: {accuracy_score(y_test, y_pred):.5f}')
 
 # Make Prediction
 print(X_test.columns)
-laker_game = laker_game.drop(['Home_Win']).to_frame().T
-predicted_outcome = model.predict(laker_game)
+last_game = last_game.drop(['Home_Win']).to_frame().T
+predicted_outcome = model.predict(last_game)
 print(predicted_outcome)
 print("Predicted Home Win:" if predicted_outcome[0] == 1 else "Predicted Home Loss 😢")
 
