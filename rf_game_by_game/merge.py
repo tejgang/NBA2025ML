@@ -2,13 +2,13 @@ import pandas as pd
 
 # 1. Load data
 season_metrics = pd.read_csv('nba_team_season_metrics_2001_2025.csv')
-df_stats = pd.read_excel('NBA_2001_2005_All team stats.xlsx', sheet_name=0)
+df_stats = pd.read_csv('NBA_2001_2005_All team stats.csv')
 
 # 2. First merge Visitor stats
 df_filled = df_stats.merge(
     season_metrics,
-    left_on=['Year', 'Visitor/Neutral'],    # Excel columns
-    right_on=['Season', 'Team'],            # CSV columns
+    left_on=['Year', 'Visitor/Neutral'],    
+    right_on=['Season', 'Team'],            
     how='left'
 ).rename(columns={
     # rename each metric from CSV to match your "Visitor X" naming
@@ -47,8 +47,8 @@ df_filled = df_filled.merge(
 df_filled = df_filled.drop(columns=['Season_x','Team_x','Season_y','Team_y'])
 
 # 5. Save to a new Excel file
-df_filled.to_excel(
-    '/mnt/data/NBA_2001_2005_All team stats_filled.xlsx',
+df_filled.to_csv(
+    'NBA_2001_2005_All team stats_filled.csv',
     index=False
 )
-print("Finished filling.  Saved to NBA_2001_2005_All team stats_filled.xlsx")
+print("Finished filling.  Saved to NBA_2001_2005_All team stats_filled.csv")
