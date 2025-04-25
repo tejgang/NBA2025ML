@@ -11,8 +11,12 @@ from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_sc
 np.random.seed(43)
 print("loading that dih...")
 
-# load data
-nba_df = pd.read_csv("NBA Complete Playoff Matchups 2001-2025.csv")
+# load data with limited number of columns to avoid the trailing commas
+nba_df = pd.read_csv("NBA Complete Playoff Matchups 2001-2025.csv", 
+                    usecols=range(9))  # Only read the first 9 columns, which contain the actual data
+
+# Print column names to verify
+print("Original column names:", nba_df.columns.tolist())
 
 # print first few rows of data
 print("here are the first few rows of data ya bish")
@@ -20,6 +24,7 @@ print(nba_df.head())
 
 # print missing values
 missing_values = nba_df.isnull().sum()
+print("Missing values:")
 print(missing_values[missing_values > 0])
 
 # drop columns with missing values
