@@ -8,7 +8,7 @@ df_stats = pd.read_csv('NBA_2001_2005_All team stats.csv')
 df_filled = df_stats.merge(
     season_metrics,
     left_on=['Year', 'Visitor/Neutral'],    
-    right_on=['Season', 'Team'],            
+    right_on=['season_end', 'team'],            
     how='left'
 ).rename(columns={
     # rename each metric from CSV to match your "Visitor X" naming
@@ -28,7 +28,7 @@ df_filled = df_stats.merge(
 df_filled = df_filled.merge(
     season_metrics,
     left_on=['Year', 'Home/Neutral'],
-    right_on=['Season', 'Team'],
+    right_on=['season_end', 'team'],
     how='left'
 ).rename(columns={
     'win_pct': 'Home win_pct',
@@ -44,7 +44,7 @@ df_filled = df_filled.merge(
 })
 
 # 4. Drop extra CSV columns
-df_filled = df_filled.drop(columns=['Season_x','Team_x','Season_y','Team_y'])
+df_filled = df_filled.drop(columns=['season_end_x','team_x','season_end_y','team_y'])
 
 # 5. Save to a new Excel file
 df_filled.to_csv(
