@@ -12,7 +12,7 @@ np.random.seed(43)
 print("loading that dih...")
 
 # load data
-nba_df = pd.read_csv("NBA Playoff Games 2001-2025.csv")
+nba_df = pd.read_csv("NBA Complete Playoff Matchups 2001-2025.csv")
 
 # print first few rows of data
 print("here are the first few rows of data ya bish")
