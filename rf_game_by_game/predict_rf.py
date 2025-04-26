@@ -26,15 +26,13 @@ missing_values = nba_df.isnull().sum()
 print("Missing values:")
 print(missing_values[missing_values > 0])
 
-# drop columns with missing values
-nba_df.drop(['PTS', 'PTS.1'], axis=1, inplace=True)
-
 # rename columns
 nba_df["Vis_Win"] = nba_df["Win"]
 nba_df["Home_Win"] = nba_df["Win.1"]
 
 # drop columns we don't need
-nba_df.drop(['Win','Win.1',"Vis_Win","Visitor/Neutral","Home/Neutral", 'Visitor_id','Year','Home_id'],axis=1,inplace=True)
+nba_df.drop(['PTS','PTS.1','Win','Win.1',"Vis_Win","Visitor/Neutral","Home/Neutral", 'Visitor_id','Year','Home_id'],axis=1,inplace=True)
+print(nba_df.head())
 if nba_df["Home_Win"].dtype != "bool": #make home_win boolean
     nba_df["Home_Win"] = nba_df["Home_Win"].astype(bool)
 nba_df["Home_Win"] = nba_df["Home_Win"].map({True: 1, False: 0}) #make home win mapped to 1 for True, 0 for false
@@ -44,8 +42,8 @@ print(nba_df[pd.isnull(nba_df["Home_Win"])])
 print(nba_df.head())
 
 # select last row for game we want to predict
-last_game = nba_df.iloc[-20] #select last row for game we want to predict
-nba_df = nba_df.iloc[0:-21] #select everything else for training and testing
+last_game = nba_df.iloc[-1] #select last row for game we want to predict
+nba_df = nba_df.iloc[0:-2] #select everything else for training and testing
 X = nba_df.drop(columns=['Home_Win'])
 y = nba_df['Home_Win']
 
@@ -67,6 +65,7 @@ last_game = last_game.drop(['Home_Win']).to_frame().T
 predicted_outcome = model.predict(last_game)
 print(predicted_outcome)
 print("Predicted Home Win:" if predicted_outcome[0] == 1 else "Predicted Home Loss 😢")
+
 
 # hyperparameter tuning
 param_grid = {
@@ -109,3 +108,4 @@ print(f'Test Accuracy: {accuracy_score(y_test, y_pred2):.5f}')
 predicted_outcome2 = model2.predict(last_game)
 print(predicted_outcome2)
 print("Predicted Home Win:" if predicted_outcome2[0] == 1 else "Predicted Home Loss 😢")
+
