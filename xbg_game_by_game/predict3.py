@@ -20,6 +20,14 @@ missing_values = df.isnull().sum()
 print("\nMissing values per column:")
 print(missing_values[missing_values > 0])
 
+# print first few rows of data
+print("here are the first few rows of data ya bish")
+print(df.head())
+
+# drop unneeded columns
+df.drop(['PTS','PTS.1'],axis=1,inplace=True)
+df.drop(['Visitor_id','Home_id'],axis=1,inplace=True)
+
 
 
 
