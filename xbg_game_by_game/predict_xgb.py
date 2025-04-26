@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import xgboost as xgb
-from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.model_selection import GridSearchCV, train_test_split, cross_val_score
 from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -69,6 +69,67 @@ predicted_outcome = model.predict(last_game)
 print(predicted_outcome)
 print("Predicted Home Win:" if predicted_outcome[0] == 1 else "Predicted Home Loss 😢")
 
+# Hyperparameter tuning
+print("\nPerforming hyperparameter tuning...")
+param_grid = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [3, 5, 7],
+    'learning_rate': [0.01, 0.1, 0.3],
+    'subsample': [0.8, 1.0],
+    'colsample_bytree': [0.8, 1.0],
+    'gamma': [0, 0.1, 0.2],
+    'min_child_weight': [1, 3, 5]
+}
+
+# Perform hyperparameter tuning
+grid_search = GridSearchCV(
+    estimator=xgb.XGBClassifier(objective='binary:logistic', eval_metric='logloss', random_state=43),
+    param_grid=param_grid,
+    cv=5,
+    scoring='accuracy',
+    n_jobs=-1
+)
+grid_search.fit(X_train_resampled, y_train_resampled)
+
+print("Best Parameters:", grid_search.best_params_)
+print("Best Accuracy:", grid_search.best_score_)
+
+# Cross validation
+cv_scores = cross_val_score(model, X_train_resampled, y_train_resampled, cv=5, scoring='accuracy')
+print("Cross-Validation Accuracy:", cv_scores.mean())
+
+# Create fine-tuned model with best parameters
+model2 = xgb.XGBClassifier(
+    objective='binary:logistic',
+    eval_metric='logloss',
+    random_state=43,
+    **grid_search.best_params_
+)
+
+model2.fit(X_train_resampled, y_train_resampled)
+print("Train Accuracy with tuned model:", model2.score(X_train_resampled, y_train_resampled))
+y_pred2 = model2.predict(X_test)
+print(f'Test Accuracy with tuned model: {accuracy_score(y_test, y_pred2):.5f}')
+
+# Make prediction with tuned model
+predicted_outcome2 = model2.predict(last_game)
+print(predicted_outcome2)
+print("Predicted Home Win (tuned model):" if predicted_outcome2[0] == 1 else "Predicted Home Loss 😢 (tuned model)")
+
+'''
+# Feature importance
+print("\nFeature Importance:")
+feature_importance = model2.feature_importances_
+feature_names = X.columns
+sorted_idx = feature_importance.argsort()[::-1]
+plt.figure(figsize=(10, 6))
+plt.barh(range(len(sorted_idx)), feature_importance[sorted_idx])
+plt.yticks(range(len(sorted_idx)), [feature_names[i] for i in sorted_idx])
+plt.xlabel('Feature Importance')
+plt.title('XGBoost Feature Importance')
+plt.savefig('xgb_feature_importance.png')
+print("Feature importance chart saved as 'xgb_feature_importance.png'")
+'''
 
 
 
