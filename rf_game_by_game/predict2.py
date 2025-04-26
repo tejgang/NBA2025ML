@@ -44,8 +44,8 @@ print(nba_df[pd.isnull(nba_df["Home_Win"])])
 print(nba_df.head())
 
 # select last row for game we want to predict
-last_game = nba_df.iloc[-1] #select last row for game we want to predict
-nba_df = nba_df.iloc[0:-2] #select everything else for training and testing
+last_game = nba_df.iloc[-20] #select last row for game we want to predict
+nba_df = nba_df.iloc[0:-21] #select everything else for training and testing
 X = nba_df.drop(columns=['Home_Win'])
 y = nba_df['Home_Win']
 
