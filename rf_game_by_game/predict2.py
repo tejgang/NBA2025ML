@@ -34,7 +34,7 @@ nba_df["Vis_Win"] = nba_df["Win"]
 nba_df["Home_Win"] = nba_df["Win.1"]
 
 # drop columns we don't need
-nba_df.drop(['Win','Win.1',"Vis_Win","Visitor/Neutral","Home/Neutral", 'team_id_x','Year','team_id_y'],axis=1,inplace=True)
+nba_df.drop(['Win','Win.1',"Vis_Win","Visitor/Neutral","Home/Neutral", 'Visitor_id','Year','Home_id'],axis=1,inplace=True)
 if nba_df["Home_Win"].dtype != "bool": #make home_win boolean
     nba_df["Home_Win"] = nba_df["Home_Win"].astype(bool)
 nba_df["Home_Win"] = nba_df["Home_Win"].map({True: 1, False: 0}) #make home win mapped to 1 for True, 0 for false
