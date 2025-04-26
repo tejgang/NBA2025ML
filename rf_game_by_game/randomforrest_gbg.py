@@ -44,10 +44,6 @@ def train_model():
     print(nba_df[pd.isnull(nba_df["Home_Win"])])
     print(nba_df.head())
 
-# select features
-    features = [
-    'Home_Win','Visitor Seed','Home Seed']
-
 # select last row for game we want to predict
     last_game = nba_df.iloc[-1] #select last row for game we want to predict
     nba_df = nba_df.iloc[0:-2] #select everything else for training and testing

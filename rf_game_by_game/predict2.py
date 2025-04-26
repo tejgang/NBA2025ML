@@ -43,10 +43,6 @@ nba_df["Home_Win"] = nba_df["Home_Win"].map({True: 1, False: 0}) #make home win 
 print(nba_df[pd.isnull(nba_df["Home_Win"])])
 print(nba_df.head())
 
-# select features
-features = [
-    'Home_Win','Visitor Seed','Home Seed']
-
 # select last row for game we want to predict
 last_game = nba_df.iloc[-1] #select last row for game we want to predict
 nba_df = nba_df.iloc[0:-2] #select everything else for training and testing
@@ -67,9 +63,49 @@ print(f'Test Accuracy: {accuracy_score(y_test, y_pred):.5f}')
 
 
 # Make Prediction
-print(X_test.columns)
 last_game = last_game.drop(['Home_Win']).to_frame().T
 predicted_outcome = model.predict(last_game)
 print(predicted_outcome)
 print("Predicted Home Win:" if predicted_outcome[0] == 1 else "Predicted Home Loss 😢")
 
+# hyperparameter tuning
+param_grid = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [None, 10, 20],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4],
+    'max_features': ['sqrt', 'log2'],
+    'ccp_alpha': [0, 0.01, 0.1]
+}
+
+# perform hyperparameter tuning
+print("hyperparameter tuning")
+grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5, scoring='accuracy', n_jobs=-1)
+grid_search.fit(X_train_resampled, y_train_resampled)
+
+print("Best Parameters:", grid_search.best_params_)
+print("Best Accuracy:", grid_search.best_score_)
+
+# cross validation
+cv_scores = cross_val_score(model, X_train_resampled, y_train_resampled, cv=5, scoring='accuracy')
+print("Cross-Validation Accuracy:", cv_scores.mean())
+
+# fine tun model
+model2 = RandomForestClassifier(
+    n_estimators=75, 
+    max_depth=7, 
+    min_samples_split=6, 
+    min_samples_leaf=7,
+    ccp_alpha=0,
+    max_features='sqrt',
+    random_state=43)
+
+model2.fit(X_train_resampled, y_train_resampled)
+print("Train Accuracy:", model2.score(X_train_resampled, y_train_resampled))
+y_pred2 = model2.predict(X_test)
+print(f'Test Accuracy: {accuracy_score(y_test, y_pred2):.5f}')
+
+# make prediction
+predicted_outcome2 = model2.predict(last_game)
+print(predicted_outcome2)
+print("Predicted Home Win:" if predicted_outcome2[0] == 1 else "Predicted Home Loss 😢")
