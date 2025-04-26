@@ -20,15 +20,6 @@ missing_values = df.isnull().sum()
 print("\nMissing values per column:")
 print(missing_values[missing_values > 0])
 
-# Handle missing values in is_champion for 2025 season
-df.loc[df['season_end'] == 2025, 'is_champion'] = False
-
-# Ensure is_champion is boolean
-if df['is_champion'].dtype != 'bool':
-    df['is_champion'] = df['is_champion'].astype(bool)
-
-# Drop columns that are not needed
-data = df.drop(columns=['points'])
 
 
 

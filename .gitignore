@@ -46,8 +46,6 @@ venv.bak/
 
 # Project specific
 *.log
-*.csv
-!nba_team_season_metrics_2001_2025.csv
 *.pkl
 *.h5
 *.json
