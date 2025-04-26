@@ -13,7 +13,7 @@ np.random.seed(42)
 
 # Load the data
 print("Loading NBA team metrics data...")
-df = pd.read_csv('NBA 2001 Every Playoff Game.csv')
+df = pd.read_csv('NBA_2001_2005_All team stats_filled.csv')
 
 # Check for missing values
 missing_values = df.isnull().sum()
