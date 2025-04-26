@@ -46,7 +46,7 @@ df_filled = df_filled.merge(
 # 4. Drop extra CSV columns
 df_filled = df_filled.drop(columns=['season_end_x','team_x','season_end_y','team_y'])
 
-# 5. Save to a new Excel file
+# 5. Save to a new csv file
 df_filled.to_csv(
     'NBA_2001_2005_All team stats_filled.csv',
     index=False
