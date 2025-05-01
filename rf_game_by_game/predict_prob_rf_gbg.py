@@ -13,7 +13,7 @@ from sklearn.metrics import roc_auc_score, accuracy_score
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 
 def train_model(tune=False):
-    nba_df = pd.read_csv("NBA_2001_2005_All team stats_filled.csv")
+    nba_df = pd.read_csv("NBA_2001_2025_All_team_stats_filled.csv")
 
     print("Original column names:", nba_df.columns.tolist())
     print("Here are the first few rows of data ya bish")
