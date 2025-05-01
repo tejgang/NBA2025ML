@@ -14,7 +14,7 @@ from collections import Counter
 from rf_game_by_game.randomforrest_gbg import train_model, predict_game
 
 #NEW NEW NEW
-def noisy_stats(stats, std_dev=0.03):
+def noisy_stats(stats, std_dev=0.1):
     """
     Adds Gaussian noise to all numeric stats *except seed* (index 0).
     std_dev = 0.03 means each stat can vary by ~±3% of its value.
