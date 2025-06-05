@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load the files
-playoff_series = pd.read_csv("NBA_2025_Playoff_Series.csv")
+playoff_series = pd.read_csv("NBA_2001_2025_All_team_stats_filled.csv")
 season_metrics = pd.read_csv("nba_team_season_metrics_2001_2025.csv")
 
 # Filter metrics to only include 2025 season
@@ -12,6 +12,7 @@ team_metrics = {}
 for _, row in season_metrics_2025.iterrows():
     team_name = row['team']
     team_metrics[team_name] = {
+        'team_id': row['team_id'],
         'win_pct': row['win_pct'],
         'off_rtg': row['off_rtg'],
         'def_rtg': row['def_rtg'],
@@ -27,9 +28,10 @@ for _, row in season_metrics_2025.iterrows():
 # Populate metrics for both visitor and home teams
 for i, row in playoff_series.iterrows():
     # Populate visitor team metrics
-    visitor_team = row['Visitor']
+    visitor_team = row['Visitor/Neutral']
     if visitor_team in team_metrics:
         metrics = team_metrics[visitor_team]
+        playoff_series.at[i, 'Visitor_id'] = metrics['team_id']
         playoff_series.at[i, 'Visitor win_pct'] = metrics['win_pct']
         playoff_series.at[i, 'Visitor off_rtg'] = metrics['off_rtg']
         playoff_series.at[i, 'Visitor def_rtg'] = metrics['def_rtg']
@@ -42,9 +44,10 @@ for i, row in playoff_series.iterrows():
         playoff_series.at[i, 'Visitor drb_pct'] = metrics['drb_pct']
     
     # Populate home team metrics
-    home_team = row['Home']
+    home_team = row['Home/Neutral']
     if home_team in team_metrics:
         metrics = team_metrics[home_team]
+        playoff_series.at[i, 'Home_id'] = metrics['team_id']
         playoff_series.at[i, 'Home win_pct'] = metrics['win_pct']
         playoff_series.at[i, 'Home off_rtg'] = metrics['off_rtg']
         playoff_series.at[i, 'Home def_rtg'] = metrics['def_rtg']
