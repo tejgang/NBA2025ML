@@ -49,7 +49,6 @@ venv.bak/
 *.pkl
 *.h5
 *.json
-*.png
 *.jpg
 *.jpeg
 *.pdf
