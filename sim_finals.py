@@ -20,7 +20,7 @@ print("\n1. LOADING DATA...")
 df = pd.read_csv("NBA_2025_Playoff_Series_with_metrics.csv")
 
 # Define metrics we'll use as features
-metrics = ['win_pct', 'off_rtg', 'def_rtg', 'net_rtg', 'pace', 'efg_pct', 'ts_pct', 'tov_pct', 'orb_pct', 'drb_pct']
+metrics = ['Seed', 'win_pct', 'off_rtg', 'def_rtg', 'net_rtg', 'pace', 'efg_pct', 'ts_pct', 'tov_pct', 'orb_pct', 'drb_pct']
 
 # Create feature differences (Visitor - Home)
 for metric in metrics:
