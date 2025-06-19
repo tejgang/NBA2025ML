@@ -70,4 +70,11 @@ models/
 *.pickle
 
 # Cached data
-.cache/ 
+.cache/
+
+rf
+rf_game-by-game
+rf_vs_gb
+simulate_playoffs
+xbg_game_by_game
+xgb
