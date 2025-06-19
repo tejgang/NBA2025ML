@@ -73,7 +73,7 @@ models/
 .cache/
 
 rf
-rf_game-by_game
+rf_game_by_game
 rf_vs_gb
 simulate_playoffs
 xbg_game_by_game
